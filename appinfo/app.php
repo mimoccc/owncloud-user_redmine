@@ -23,13 +23,15 @@
 
 require_once('apps/user_redmine/user_redmine.php');
 
-OC_APP::registerAdmin('user_redmine','settings');
-OC_User::useBackend( "redmine" );
+OCP\App::registerAdmin('user_redmine','settings');
+
+// register user backend
+OC_User::useBackend( 'redmine' );
 
 // add settings page to navigation
 $entry = array(
-    'id' => "user_redmine_settings",
-    'order'=>1,
+    'id'   => 'user_redmine_settings',
+    'order'=> 1,
     'href' => OC_Helper::linkTo( "user_redmine", "settings.php" ),
     'name' => 'Redmine'
 );

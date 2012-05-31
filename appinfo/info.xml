@@ -6,7 +6,7 @@
     <version>0.1</version>
     <licence>AGPL</licence>
     <author>Steffen Zieger &lt;me@saz.sh&gt;</author>
-    <require>2</require>
+    <require>4</require>
     <types>
         <authentication/>
     </types>
