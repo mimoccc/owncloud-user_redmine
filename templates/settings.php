@@ -17,7 +17,7 @@
                 value="<?php echo $_['redmine_db_user']; ?>" />
 
             <label for="redmine_db_password"><?php echo $l->t('DB Password');?></label>
-            <input type="text" id="redmine_db_password" name="redmine_db_password" 
+            <input type="password" id="redmine_db_password" name="redmine_db_password" 
                 value="<?php echo $_['redmine_db_password']; ?>" />
         </p>
 
