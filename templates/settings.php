@@ -9,6 +9,19 @@
             <label for="redmine_db_name"><?php echo $l->t('DB Name');?></label>
             <input type="text" id="redmine_db_name" name="redmine_db_name" 
                 value="<?php echo $_['redmine_db_name']; ?>" />
+
+            <label for="redmine_db_driver"><?php echo $l->t('DB Driver');?></label>
+            <?php $db_driver = array('mysql' => 'MySQL', 'pgsql' => 'PostgreSQL');?>
+            <select id="redmine_db_driver" name="redmine_db_driver">
+                <?php foreach ($db_driver as $driver => $name): ?>
+                    <?php echo $_['redmine_db_driver']; ?>
+                    <?php if ($_['redmine_db_driver'] == $driver): ?>
+                        <option selected="selected" value="<?php echo $driver; ?>"><?php echo $name; ?></option>
+                    <?php else: ?>
+                        <option value="<?php echo $driver; ?>"><?php echo $name; ?></option>
+                    <?php endif ?>
+                <?php endforeach; ?>
+            </select>
         </p>
 
         <p>
