@@ -24,7 +24,8 @@ $params = array(
     'redmine_db_host',
     'redmine_db_user',
     'redmine_db_password',
-    'redmine_db_name'
+    'redmine_db_name',
+    'redmine_db_driver'
 );
 
 if ($_POST) {
@@ -38,7 +39,11 @@ if ($_POST) {
 // fill template
 $tmpl = new OC_Template( 'user_redmine', 'settings');
 foreach($params as $param){
-    $value = OC_Appconfig::getValue('user_redmine', $param,'');
+    $default = '';
+    if ($param == 'redmine_db_driver') {
+        $default = 'mysql';
+    }
+    $value = OC_Appconfig::getValue('user_redmine', $param, $default);
     $tmpl->assign($param, $value);
 }
 
