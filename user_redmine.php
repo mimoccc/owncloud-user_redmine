@@ -31,22 +31,22 @@ class OC_User_Redmine extends OC_User_Backend {
 
     function __construct() {
         $this->db_conn = false;
-        $this->redmine_db_host = OC_Appconfig::getValue('user_redmine', 'redmine_db_host','');
-        $this->redmine_db_name = OC_Appconfig::getValue('user_redmine', 'redmine_db_name','');
-        $this->redmine_db_user = OC_Appconfig::getValue('user_redmine', 'redmine_db_user','');
-        $this->redmine_db_password = OC_Appconfig::getValue('user_redmine', 'redmine_db_password','');
+        $db_host = OC_Appconfig::getValue('user_redmine', 'redmine_db_host','');
+        $db_name = OC_Appconfig::getValue('user_redmine', 'redmine_db_name','');
+        $db_driver = OC_Appconfig::getValue('user_redmine', 'redmine_db_driver', 'mysql');
+        $db_user = OC_Appconfig::getValue('user_redmine', 'redmine_db_user','');
+        $db_password = OC_Appconfig::getValue('user_redmine', 'redmine_db_password','');
+        $dsn = "${db_driver}:host=${db_host};dbname=${db_name}";
 
-        $errorlevel = error_reporting();
-        error_reporting($errorlevel & ~E_WARNING);
-        $this->db = new mysqli($this->redmine_db_host, $this->redmine_db_user, $this->redmine_db_password, $this->redmine_db_name);
-        error_reporting($errorlevel);
-        if ($this->db->connect_errno) {
+        try {
+            $this->db = new PDO($dsn, $db_user, $db_password);
+            $this->db_conn = true;
+        } catch (PDOException $e) {
             OC_Log::write('OC_User_Redmine',
-                'OC_User_Redmine, Failed to connect to redmine database: ' . $this->db->connect_error,
+                'OC_User_Redmine, Failed to connect to redmine database: ' . $e->getMessage(),
                 OC_Log::ERROR);
-            return false;
         }
-        $this->db_conn = true;
+        return false;
     }
 
     /**
@@ -58,10 +58,18 @@ class OC_User_Redmine extends OC_User_Backend {
             return false;
         }
 
-        $result = $this->db->query('SELECT mail FROM users WHERE login = "'. $this->db->real_escape_string($uid) .'"');
-        $email = $result->fetch_assoc();
-        $email = $email['mail'];
-        OC_Preferences::setValue($uid, 'settings', 'email', $email);
+        $sql = 'SELECT mail FROM users WHERE login = :uid';
+        $sth = $this->db->prepare($sql);
+        if ($sth->execute(array(':uid' => $uid))) {
+            $row = $sth->fetch();
+
+            if ($row) {
+                if (OC_Preferences::setValue($uid, 'settings', 'email', $row['mail'])) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -75,14 +83,16 @@ class OC_User_Redmine extends OC_User_Backend {
             return false;
         }
 
-        $query = 'SELECT login FROM users WHERE login = "' . $this->db->real_escape_string($uid) . '"';
-        $query .= ' AND hashed_password = SHA1(CONCAT(salt, SHA1("' . $this->db->real_escape_string($password) . '")))';
-        $result = $this->db->query($query);
-        $row = $result->fetch_assoc();
+        $sql = 'SELECT login FROM users WHERE login = :uid';
+        $sql .= ' AND hashed_password = SHA1(CONCAT(salt, SHA1(:password)))';
+        $sth = $this->db->prepare($sql);
+        if ($sth->execute(array(':uid' => $uid, ':password' => $password))) {
+            $row = $sth->fetch();
 
-        if ($row) {
-            $this->setEmail($uid);
-            return $row['login'];
+            if ($row) {
+                $this->setEmail($uid);
+                return $row['login'];
+            }
         }
         return false;
     }
@@ -93,19 +103,39 @@ class OC_User_Redmine extends OC_User_Backend {
      *
      * Get a list of all users
      */
-    public function getUsers() {
-        $users = array();
+    public function getUsers($search = '', $limit = null, $offset = null) {
         if (!$this->db_conn) {
-            return $users;
+            return array();
         }
 
-        $result = $this->db->query('SELECT login FROM users WHERE status < 3');
-        while ($row = $result->fetch_assoc()) {
-            if(!empty($row['login'])) {
+        $users = array();
+        $offset = (int)$offset;
+        $limit = (int)$limit;
+
+        $sql = 'SELECT login FROM users WHERE status < 3';
+        $sql .= " AND login != ''";
+        if (!empty($search)) {
+            $sql .= " AND login LIKE :search";
+        }
+        $sql .= ' ORDER BY login';
+        if ($limit) {
+            $sql .= ' LIMIT :offset,:limit';
+        }
+
+        $sth = $this->db->prepare($sql);
+        if (!empty($search)) {
+            $sth->bindParam(':search', '%'.$search.'%', PDO::PARAM_STR);
+        }
+        if ($limit) {
+            $sth->bindParam(':offset', $offset, PDO::PARAM_INT);
+            $sth->bindParam(':limit', $limit, PDO::PARAM_INT);
+        }
+
+        if ($sth->execute()) {
+            while ($row = $sth->fetch()) {
                 $users[] = $row['login'];
             }
         }
-        sort($users);
         return $users;
     }
 
@@ -119,7 +149,13 @@ class OC_User_Redmine extends OC_User_Backend {
             return false;
         }
 
-        $result = $this->db->query('SELECT login FROM users WHERE login = "'. $this->db->real_escape_string($uid) .'" AND status < 3');
-        return $result->num_rows > 0;
+        $sql = 'SELECT login FROM users WHERE login = :uid';
+        $sth = $this->db->prepare($sql);
+        if ($sth->execute(array(':uid' => $uid))) {
+            $row = $sth->fetch();
+
+            return !empty($row);
+        }
+        return false;
     }
 }
