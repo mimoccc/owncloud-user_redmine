@@ -3,7 +3,7 @@
     <id>user_redmine</id>
     <name>Redmine user backend</name>
     <description>Authenticate users using Redmine Database</description>
-    <version>0.2</version>
+    <version>0.3</version>
     <licence>AGPL</licence>
     <author>Steffen Zieger &lt;me@saz.sh&gt;</author>
     <require>4</require>
