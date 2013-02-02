@@ -124,7 +124,8 @@ class OC_User_Redmine extends OC_User_Backend {
 
         $sth = $this->db->prepare($sql);
         if (!empty($search)) {
-            $sth->bindParam(':search', '%'.$search.'%', PDO::PARAM_STR);
+            $searchterm = '%'.$search.'%';
+            $sth->bindParam(':search', $searchterm, PDO::PARAM_STR);
         }
         if ($limit) {
             $sth->bindParam(':offset', $offset, PDO::PARAM_INT);
