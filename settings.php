@@ -20,6 +20,9 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+OC_Util::checkAdminUser();
+
 $params = array(
     'redmine_db_host',
     'redmine_db_user',
