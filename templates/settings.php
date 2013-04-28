@@ -15,7 +15,7 @@
             <select id="redmine_db_driver" name="redmine_db_driver">
                 <?php foreach ($db_driver as $driver => $name): ?>
                     <?php echo $_['redmine_db_driver']; ?>
-                    <?php if ($_['redmine_db_driver'] == $driver): ?>
+                    <?php if ($_['redmine_db_driver'] === $driver): ?>
                         <option selected="selected" value="<?php echo $driver; ?>"><?php echo $name; ?></option>
                     <?php else: ?>
                         <option value="<?php echo $driver; ?>"><?php echo $name; ?></option>
