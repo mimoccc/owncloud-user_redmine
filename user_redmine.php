@@ -85,6 +85,7 @@ class OC_User_Redmine extends OC_User_Backend {
 
         $sql = 'SELECT login FROM users WHERE login = :uid';
         $sql .= ' AND hashed_password = SHA1(CONCAT(salt, SHA1(:password)))';
+        $sql .= ' AND status = 1';
         $sth = $this->db->prepare($sql);
         if ($sth->execute(array(':uid' => $uid, ':password' => $password))) {
             $row = $sth->fetch();
