@@ -22,6 +22,7 @@
  */
 
 OC_Util::checkAdminUser();
+OC_Util::isCallRegistered();
 
 $params = array(
     'redmine_db_host',
