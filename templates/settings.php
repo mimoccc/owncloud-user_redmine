@@ -1,6 +1,7 @@
 <form id="redmine" action="#" method="post">
     <fieldset class="personalblock">
         <legend><strong>Redmine</strong></legend>
+        <input type="hidden" name="requesttoken" value="<?php echo $_['requesttoken'] ?>" id="requesttoken">
         <p>
             <label for="redmine_db_host"><?php p($l->t('DB Host'));?></label>
             <input type="text" id="redmine_db_host" name="redmine_db_host"
