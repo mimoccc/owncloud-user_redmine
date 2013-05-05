@@ -22,10 +22,6 @@
  */
 
 class OC_User_Redmine extends OC_User_Backend {
-    protected $redmine_db_host;
-    protected $redmine_db_name;
-    protected $redmine_db_user;
-    protected $redmine_db_password;
     protected $db;
     protected $db_conn;
 
@@ -114,7 +110,8 @@ class OC_User_Redmine extends OC_User_Backend {
         $offset = (int)$offset;
         $limit = (int)$limit;
 
-        $sql = 'SELECT login FROM users WHERE status < 3';
+        // All users or only active users?
+        $sql = 'SELECT login FROM users WHERE status <= 3';
         $sql .= " AND login != ''";
         if (!empty($search)) {
             $sql .= " AND login LIKE :search";
