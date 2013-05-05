@@ -10,6 +10,12 @@
             <label for="redmine_db_name"><?php p($l->t('DB Name'));?></label>
             <input type="text" id="redmine_db_name" name="redmine_db_name" 
                 value="<?php p($_['redmine_db_name']); ?>" />
+        </p>
+
+        <p>
+            <label for="redmine_db_port"><?php p($l->t('DB Port'));?></label>
+            <input type="text" id="redmine_db_port" name="redmine_db_port" 
+                value="<?php p($_['redmine_db_port']); ?>" />
 
             <label for="redmine_db_driver"><?php p($l->t('DB Driver'));?></label>
             <?php $db_driver = array('mysql' => 'MySQL', 'pgsql' => 'PostgreSQL');?>
