@@ -32,9 +32,8 @@ class OC_User_Redmine extends OC_User_Backend {
         $db_driver = OC_Appconfig::getValue('user_redmine', 'redmine_db_driver', 'mysql');
         $db_user = OC_Appconfig::getValue('user_redmine', 'redmine_db_user','');
         $db_password = OC_Appconfig::getValue('user_redmine', 'redmine_db_password','');
-        $dsn = "${db_driver}:host=${db_host};dbname=${db_name}";
-        // Memo for later:
-        // $dsn = "${db_driver}:host=${db_host};port=${db_port};dbname=${db_name}";
+        $db_port = OC_Appconfig::getValue('user_redmine', 'redmine_db_port','');
+        $dsn = "${db_driver}:host=${db_host};port=${db_port};dbname=${db_name}";
         try {
             $this->db = new PDO($dsn, $db_user, $db_password);
             $this->db_conn = true;

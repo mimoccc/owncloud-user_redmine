@@ -26,6 +26,7 @@ OC_Util::isCallRegistered();
 
 $params = array(
     'redmine_db_host',
+    'redmine_db_port',
     'redmine_db_user',
     'redmine_db_password',
     'redmine_db_name',
@@ -46,6 +47,12 @@ foreach($params as $param){
     $default = '';
     if ($param == 'redmine_db_driver') {
         $default = 'mysql';
+    }
+    if ($param == 'redmine_db_port') {
+        $default = '3306';
+    }
+    if ($param == 'redmine_db_host') {
+        $default = 'localhost';
     }
     $value = OC_Appconfig::getValue('user_redmine', $param, $default);
     $tmpl->assign($param, $value);
